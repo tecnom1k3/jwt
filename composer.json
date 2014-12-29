@@ -1,0 +1,15 @@
+{
+    "name": "tecnomike/jwt",
+    "authors": [
+        {
+            "name": "tecnomike",
+            "email": "miguel@digitec.ws"
+        }
+    ],
+    "require": {
+        "silex/silex": "~1.1"
+    },
+    "autoload": {
+        "psr-4": {"Acme\\": "src/"}
+    }
+}
