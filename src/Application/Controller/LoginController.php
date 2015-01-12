@@ -2,6 +2,7 @@
 namespace Acme\Application\Controller;
 
 use Acme\Application\Model\Token;
+use Acme\Application\Model\TokenInterface as TokenModelInterface;
 use Acme\Application\Service\LoginService;
 use Acme\Application\Service\LoginServiceInterface;
 use Acme\Application\Service\TokenService;
@@ -10,7 +11,7 @@ use Silex\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class LoginController implements LoginServiceInterface, TokenServiceInterface
+class LoginController implements LoginServiceInterface, TokenServiceInterface, TokenModelInterface
 {
     /**
      * @var LoginService
@@ -21,10 +22,16 @@ class LoginController implements LoginServiceInterface, TokenServiceInterface
      * @var TokenService
      */
     protected $tokenService;
+
+    /**
+     * @var Token
+     */
+    protected $tokenModel;
     
-    public function __construct(LoginService $login, TokenService $tokenService) {
+    public function __construct(LoginService $login, TokenService $tokenService, Token $tokenModel) {
         $this->setLoginService($login);
         $this->setTokenService($tokenService);
+        $this->setToken($tokenModel);
     }
 
     /**
@@ -51,7 +58,7 @@ class LoginController implements LoginServiceInterface, TokenServiceInterface
         $userDetails = $this->getLoginService()->doLogin($user, $password);
         
         if (isset($userDetails['id']) && $userDetails['id']) {
-            $token = new Token(); //TODO: dependency injection
+            $token = $this->getToken();
             $token->setUserId($userDetails['id']);
 
             $jwt = $this->getTokenService()->generate($token);
@@ -93,5 +100,22 @@ class LoginController implements LoginServiceInterface, TokenServiceInterface
     public function getTokenService()
     {
         return $this->tokenService;
+    }
+
+    /**
+     * @return Token
+     */
+    public function getToken()
+    {
+        return $this->tokenModel;
+    }
+
+    /**
+     * @param Token $token
+     * @return void
+     */
+    public function setToken(Token $token)
+    {
+        $this->tokenModel = $token;
     }
 }
