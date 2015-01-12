@@ -1,18 +1,18 @@
 <?php
 namespace Acme\Application\Controller\Provider;
 
-use Silex\Application;
-use Silex\ControllerProviderInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Acme\Application\Controller\LoginController;
 use Acme\Application\Service\LoginService;
 use Acme\Application\Service\TokenService;
-use Acme\Application\Controller\LoginController;
+use Silex\Application;
+use Silex\ControllerCollection;
+use Silex\ControllerProviderInterface;
 
 class LoginControllerProvider implements ControllerProviderInterface
 {
     /**
      * @param Application $app
-     * @return mixed
+     * @return ControllerCollection
      */
     public function connect(Application $app)
     {
