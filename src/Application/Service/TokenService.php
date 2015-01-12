@@ -15,7 +15,7 @@ class TokenService
         }
         
         if (empty($token->jti)) {
-            $token->jti = uniqid();
+            $token->jti = uniqid(); //TODO: randomize
         }
         
         return JWT::encode($token->toArray(), self::KEY);

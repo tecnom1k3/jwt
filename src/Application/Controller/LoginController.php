@@ -40,6 +40,6 @@ class LoginController
             return new JsonResponse(['token' => $jwt]);
         }
         
-        return new JsonResponse([]);
+        return new JsonResponse([], 404);
     }
 }

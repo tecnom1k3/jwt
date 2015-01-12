@@ -14,6 +14,13 @@ class LoginService
     
     public function doLogin($username, $password)
     {
+        /*
+         * Also consider implementing oauth2
+         * https://bshaffer.github.io/oauth2-server-php-docs/
+         * https://github.com/bshaffer/oauth2-server-php
+         */
+        
+        //TODO: Use doctrine model
         $queryBuilder = $this->dbConn->createQueryBuilder();
         $queryBuilder->select('id', 'username', 'password')
             ->from('users')
