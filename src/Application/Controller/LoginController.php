@@ -3,6 +3,7 @@ namespace Acme\Application\Controller;
 
 use Acme\Application\Model\Token;
 use Acme\Application\Model\TokenInterface as TokenModelInterface;
+use Acme\Application\Model\User;
 use Acme\Application\Service\LoginService;
 use Acme\Application\Service\LoginServiceInterface;
 use Acme\Application\Service\TokenService;
@@ -54,12 +55,13 @@ class LoginController implements LoginServiceInterface, TokenServiceInterface, T
         if (!$user || !$password) {
             $app->abort(403, 'Forbidden');
         }
-        
+
+        /** @var $userDetails User */
         $userDetails = $this->getLoginService()->doLogin($user, $password);
         
-        if (isset($userDetails['id']) && $userDetails['id']) {
+        if ($userDetails instanceof User) {
             $token = $this->getToken();
-            $token->setUserId($userDetails['id']);
+            $token->setUserId($userDetails->getId());
 
             $jwt = $this->getTokenService()->generate($token);
             return new JsonResponse(['token' => $jwt]);

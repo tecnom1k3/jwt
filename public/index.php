@@ -2,9 +2,11 @@
 chdir(dirname(__DIR__));
 require_once 'vendor/autoload.php';
 
-use Silex\Application;
 use Acme\Application\Controller\Provider\LoginControllerProvider;
+use Silex\Application;
 use Silex\Provider\ServiceControllerServiceProvider;
+use Doctrine\ORM\Tools\Setup;
+use Doctrine\ORM\EntityManager;
 
 $app = new Application();
 $app['debug'] = true;
@@ -28,6 +30,13 @@ $app['db.connection'] = $app->share(function() {
         'driver' => 'pdo_mysql',
     );
     return \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+});
+
+$app['db.entityManager'] = $app->share(function() use ($app){
+    //TODO: get model fir from config file
+    $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/src/Application/Model"), $app['debug']);
+
+    return EntityManager::create($app['db.connection'], $config);
 });
 
 $app->register(new ServiceControllerServiceProvider());

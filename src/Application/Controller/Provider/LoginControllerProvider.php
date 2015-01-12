@@ -18,7 +18,7 @@ class LoginControllerProvider implements ControllerProviderInterface
     public function connect(Application $app)
     {
         $app['login.service'] = $app->share(function() use ($app) {
-            return new LoginService($app['db.connection']);
+            return new LoginService($app['db.entityManager']);
         });
         
         $app['token.service'] = $app->share(function() use ($app) {
@@ -34,6 +34,7 @@ class LoginControllerProvider implements ControllerProviderInterface
         });
 
         // creates a new controller based on the default route
+        /** @var $controllers ControllerCollection */
         $controllers = $app['controllers_factory'];
 
         $controllers->get('/', 'login.controller:index');

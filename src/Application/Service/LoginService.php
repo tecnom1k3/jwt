@@ -1,24 +1,25 @@
 <?php
 namespace Acme\Application\Service;
 
-use Doctrine\DBAL\Connection;
+use Acme\Application\Model\User;
+use Doctrine\ORM\EntityManager;
 
-class LoginService
+class LoginService implements EntityManagerInterface
 {
     /**
-     * @var Connection
+     * @var EntityManager
      */
-    protected $dbConn;
-    
-    public function __construct(Connection $conn)
+    protected $entityManager;
+
+    public function __construct(EntityManager $entityManager)
     {
-        $this->dbConn = $conn;
+        $this->setEntityManager($entityManager);
     }
 
     /**
      * @param $username
      * @param $password
-     * @return array
+     * @return User|null
      */
     public function doLogin($username, $password)
     {
@@ -27,25 +28,35 @@ class LoginService
          * https://bshaffer.github.io/oauth2-server-php-docs/
          * https://github.com/bshaffer/oauth2-server-php
          */
+
+        $userRepository = $this->getEntityManager()->getRepository('Acme\Application\Model\User');
+
+        /** @var $user User */
+        $user = $userRepository->findOneBy(['username' => $username]);
         
-        //TODO: Use doctrine model
-        $queryBuilder = $this->dbConn->createQueryBuilder();
-        $queryBuilder->select('id', 'username', 'password')
-            ->from('users')
-            ->where('username = ?')
-            ->setParameter(0, $username);
-            
-        $rs = $queryBuilder->execute()->fetch();
-        
-        if (count($rs)) {
-            if (password_verify($password, $rs['password'])) {
-                return [
-                    'id'       => $rs['id'], 
-                    'username' => $rs['username']
-                    ];
+        if ($user instanceof User) {
+            if (password_verify($password, $user->getPassword())) {
+                return $user;
             }
         }
         
-        return [];
+        return null;
+    }
+
+    /**
+     * @param EntityManager $entityManager
+     * @return void
+     */
+    public function setEntityManager(EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @return EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->entityManager;
     }
 }
