@@ -7,18 +7,21 @@ use JWT;
 class TokenService
 {
     const KEY = 'asdasdasdasdasdasd'; //TODO: generate/derive key for each new jwt
-    
+
+    /**
+     * @param Token $token
+     * @return string
+     */
     public function generate(Token $token)
     {
-        if (empty($token->iat)) {
-            $token->iat = time();
+        if (!$token->getIat()) {
+            $token->setIat(time());
         }
         
-        if (empty($token->jti)) {
-            $token->jti = uniqid(); //TODO: randomize
+        if (!$token->getJti()) {
+            $token->setJti(uniqid()); //TODO: randomize
         }
         
         return JWT::encode($token->toArray(), self::KEY);
-        
     }
 }

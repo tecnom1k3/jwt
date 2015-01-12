@@ -10,18 +10,34 @@ use Acme\Application\Model\Token;
 
 class LoginController
 {
+    /**
+     * @var LoginService
+     */
     protected $repository;
+
+    /**
+     * @var TokenService
+     */
     protected $tokenService;
     
     public function __construct(LoginService $login, TokenService $tokenService) {
         $this->repository = $login;
         $this->tokenService = $tokenService;
     }
-    
+
+    /**
+     * @param Request $request
+     * @param Application $app
+     */
     public function index(Request $request, Application $app) {
         $app->abort(403, "Forbidden");
     }
-    
+
+    /**
+     * @param Request $request
+     * @param Application $app
+     * @return JsonResponse
+     */
     public function doLogin(Request $request, Application $app) {
         $user = $request->get('user', null);
         $password = $request->get('password', null);
@@ -34,7 +50,7 @@ class LoginController
         
         if (isset($userDetails['id']) && $userDetails['id']) {
             $token = new Token(); //TODO: dependency injection
-            $token->userId = $userDetails['id'];
+            $token->setUserId($userDetails['id']);
 
             $jwt = $this->tokenService->generate($token);
             return new JsonResponse(['token' => $jwt]);

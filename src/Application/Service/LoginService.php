@@ -5,13 +5,21 @@ use Doctrine\DBAL\Connection;
 
 class LoginService
 {
+    /**
+     * @var Connection
+     */
     protected $dbConn;
     
     public function __construct(Connection $conn)
     {
         $this->dbConn = $conn;
     }
-    
+
+    /**
+     * @param $username
+     * @param $password
+     * @return array
+     */
     public function doLogin($username, $password)
     {
         /*

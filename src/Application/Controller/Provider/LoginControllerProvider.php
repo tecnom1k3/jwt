@@ -10,6 +10,10 @@ use Acme\Application\Controller\LoginController;
 
 class LoginControllerProvider implements ControllerProviderInterface
 {
+    /**
+     * @param Application $app
+     * @return mixed
+     */
     public function connect(Application $app)
     {
         $app['login.service'] = $app->share(function() use ($app) {
